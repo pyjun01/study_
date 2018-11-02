@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 	<meta charset="UTF-8">
-	<title>MoveBall</title>
+	<title>ExpectedPathBall</title>
 	<style>
 		html, body{width: 100%;height: 100%;margin: 0;padding: 0;display: flex;justify-content: center;align-items: center;background:#000; flex-direction: column;}
 		#canvas{background:#fff;}
@@ -12,40 +12,43 @@
 </head>
 <body>
 	<canvas id="canvas" width="800" height="800"></canvas>
-	<div>
-		X속도=
-		<input type="number" title="velocity_x" name="x" id="x" min="0" max="40"> , 
-		Y속도=
-		<input type="number" title="velocity_y" name="y" id="y" min="0" max="40">
-	</div>
 	<script><!-- 
 		window.onload= _ =>{
 			function ev (){//event
-				ix.addEventListener("input", function (){
-					if(this.value<0)
-						this.value=0
-					else if(this.value>40)
-						this.value=40
-					vx= vx>0? Number(this.value): -Number(this.value);
+				canvas.addEventListener("mousedown", function (e){
+					cx= e.pageX-canvas.offsetLeft;
+					cy= e.pageY-canvas.offsetTop;
+					if( Math.sqrt(Math.abs(cx-x)*Math.abs(cx-x)+Math.abs(cy-y)*Math.abs(cy-y)) <= radius )
+					down= true;
 				});
-				iy.addEventListener("input", function (){
-					if(this.value<0)
-						this.value=0
-					else if(this.value>40)
-						this.value=40
-					vy= vy>0? Number(this.value): -Number(this.value);
+				window.addEventListener("mousemove", function (e){
+					if(down){
+						mx= e.pageX-canvas.offsetLeft;
+						my= e.pageY-canvas.offsetTop;
+						console.log(-(mx-cx));
+						console.log(-(my-cy));
+						DrawPath();
+					}
+				});
+				window.addEventListener("mouseup", function (e){
+					down= false;
 				});
 			}
 			function clear (){//canvas clear
 				ctx.clearRect(0,0,canvas.width, canvas.height);
 			}
 			function arc (x, y){//draw arc
+				ctx.setLineDash([]);
 				ctx.beginPath();
 				ctx.arc(x, y, radius, 0, 2*Math.PI, false);//x, y, 반지름
 				ctx.stroke();
 				ctx.closePath();
+				ctx.setLineDash([5, 3]);
+			}
+			function DrawPath (){
 			}
 			function play(){//play animation
+				arc(x, y);
 				clear();
 				x+=vx;
 				y+=vy;
@@ -57,28 +60,27 @@
 					y= y+radius>=canvas.height? canvas.height-radius: radius;
 					vy*= -1;
 				}
-				arc(x, y);
 				setTimeout(_ =>{
 					play();
 				}, 20);
 			}
-
 			const canvas= document.getElementById("canvas");
-			const ctx= C.getContext('2d');
-			const radius= 30;
+			const ctx= canvas.getContext('2d');
+			const radius= 10;
 			let x= canvas.width/2;//location
 			let y= canvas.height/2;//location
-			let vx= Math.floor(Math.random()*10+5);//velocity
-			let vy= Math.floor(Math.random()*-10-5);//velocity
-			let ix= document.querySelector("#x");//velocity input
-			let iy= document.querySelector("#y");//velocity input
 
-			ix.value= Math.abs(vx);
-			iy.value= Math.abs(vy);
+			let cx=0, cy= 0;
+			let mx=0, my= 0;
+			let down= false;
+
+			ctx.setLineDash([5, 3]);/*dashes are 5px and spaces are 3px*/
+			ctx.lineCap= 'round';
 			ctx.strokeStyle="#333";
 			ctx.fillStyle="#333";
+
 			ev();
-			play();
+			arc(x, y);
 		}
 	</script>
 </body>

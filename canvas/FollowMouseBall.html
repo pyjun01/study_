@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>FollowMouseBall</title>
+	<style>
+		html, body{width: 100%;height: 100%;margin: 0;padding: 0;display: flex;justify-content: center;align-items: center;background:#000; flex-direction: column;}
+		#canvas{background:#fff;}
+		div{color: #fff;}
+		input{width: 3em;}
+	</style>
+</head>
+<body>
+	<canvas id="canvas" width="800" height="800"></canvas>
+	<script><!-- 
+		window.onload= _ =>{
+			function ev (){//event
+				canvas.addEventListener("mousedown", function (e){
+					cx= e.pageX-canvas.offsetLeft;
+					cy= e.pageY-canvas.offsetTop;
+					if( Math.sqrt(Math.abs(cx-x)*Math.abs(cx-x)+Math.abs(cy-y)*Math.abs(cy-y)) <= radius )
+						down= true;
+				});
+				window.addEventListener("mousemove", function (e){
+					if(down){
+						mx= e.pageX-canvas.offsetLeft;
+						my= e.pageY-canvas.offsetTop;
+						clear();
+						x+= mx-cx;
+						y+= my-cy;
+						arc(x, y);
+						cx= mx;cy= my;
+					}
+				});
+				window.addEventListener("mouseup", function (e){
+					down= false;
+				});
+			}
+			function clear (){//canvas clear
+				ctx.clearRect(0,0,canvas.width, canvas.height);
+			}
+			function arc (px, py){//draw arc
+				if(x+radius>=canvas.width || x<=radius)
+					px= px+radius>=canvas.width? canvas.width-radius: radius;
+				if(y+radius>=canvas.height || y<=radius)
+					py= py+radius>=canvas.height? canvas.height-radius: radius;
+				ctx.beginPath();
+				ctx.arc(px, py, radius, 0, 2*Math.PI, false);//x, y, 반지름
+				ctx.stroke();
+				ctx.closePath();
+			}
+
+			const canvas= document.getElementById("canvas");
+			const ctx= canvas.getContext('2d');
+			const radius= 30;
+			let x= canvas.width/2;//location
+			let y= canvas.height/2;//location
+			let cx=0, cy= 0;//click location
+			let mx=0, my= 0;//move location
+			let down= false;
+			ctx.fillStyle="#333";
+			arc(x, y);
+			ev();
+		}
+	</script>
+</body>
+</html>
