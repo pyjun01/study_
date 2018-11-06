@@ -1,3 +1,68 @@
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<title>test</title>
+	<style>
+		/*div{
+			width: 100px;height: 100px;
+			background-image: linear-gradient(45deg, #3023AE 0%, #FF0099 100%);
+			border-radius: 40% 60% 60% 40% / 50% 50% 50% 50% ;
+		}*/
+		html,body{width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;}
+	</style>
+</head>
+<body>
+	<!-- 
+		19 x 19 
+		가로 42cm, 세로 45cm
+	-->
+	<canvas id="canvas" width="1000" height="1000"></canvas>
+	<div class="color">
+		<canvas id="color"></canvas>
+	</div>
+	<script>
+		const canvas = document.querySelector('canvas');
+		const ctx = canvas.getContext('2d');
+		const W= canvas.width;
+		const H= canvas.height;
+		const len= 21;
+		const paths = [];
+		for (let i = 0; i < Math.pow(len, 2); i++) {// draw Path, fill canvas, push path
+			let path= drawPath(i%len*W/len, (Math.ceil((i+1)/len)-1)*H/len);
+			ctx.fillStyle = i%2? `white`: 'black';
+			ctx.fill(path);
+  			paths.push(path);
+		}
+		canvas.addEventListener('click', e =>{//canvas click
+			let b= canvas.getBoundingClientRect();
+			let x= e.pageX - b.top;
+			let y= e.pageY - b.left;
+			paths.forEach((path, index) => {
+				if (ctx.isPointInPath(path, x, y)) {
+					let c= ctx.getImageData(x, y, 1, 1).data[0];
+					ctx.fillStyle= c? "black": "white";
+					ctx.fill(path)
+				}
+			});
+		});
+		function drawPath (x, y){
+			let path= new Path2D();
+			path.moveTo(x, y);
+			x+= W/5;
+			path.lineTo(x,y);
+			y+= H/5;
+			path.lineTo(x,y);
+			x-= W/5;
+			path.lineTo(x,y);
+			path.closePath();
+			return path;
+		}
+	</script>
+</body>
+=======
 <!DOCTYPE html>
 <html lang="kr">
 <head>
@@ -64,4 +129,5 @@
 		}
 	</script>
 </body>
+>>>>>>> e02447fcaff143687d16ea8db8be34cf693dce04
 </html>

@@ -12,76 +12,95 @@
 </head>
 <body>
 	<canvas id="canvas" width="800" height="800"></canvas>
-	<script><!-- 
-		window.onload= _ =>{
-			function ev (){//event
+	<script>
+			const canvas= document.getElementById("canvas");
+			const ctx= canvas.getContext('2d');
+
+			let cx=0, cy= 0;
+			let mx=0, my= 0;
+			let down= false;
+
+			let Arc= new _Arc();
+			Arc.init(canvas.width/2, canvas.height/2);
+
+			function _Arc (){
+				this.path= new Path2D();
+				this.radius= 10;
+				this.x;
+				this.y;
+				this.init= (px, py) =>{
+					this.x= px;this.y= py;
+					this.draw();
+				}
+				this.draw= _ =>{
+					this.path= new Path2D();
+					ctx.setLineDash([]);
+					ctx.strokeStyle= "#000";
+
+					this.path.arc(this.x, this.y, this.radius, 0, 2*Math.PI, false);
+					ctx.stroke(this.path);
+
+					ctx.setLineDash([5, 3]);
+					ctx.strokeStyle= "#333";
+				}
+			}
+
+			ctx.lineCap= 'round';
+			ctx.setLineDash([5, 3]);/*dashes are 5px and spaces are 3px*/
+			ctx.strokeStyle="#333";
+			ctx.fillStyle="#333";
+
+				function clear (){
+					ctx.clearRect(0,0,canvas.width,canvas.height);
+				}
+				function DrawPath (lx, ly){
+					console.log(`${lx}, ${ly}`);
+					
+					clear();
+					Arc.draw();
+					ctx.beginPath();
+					ctx.moveTo(Arc.x, Arc.y);
+					ctx.lineTo(Arc.x - lx, Arc.y + ly);
+					ctx.stroke();
+					ctx.closePath();
+				}
+				function play (){//play animation
+					arc(x, y);
+					clear();
+					x+=vx;
+					y+=vy;
+					if(x+radius>=canvas.width || x<=radius){
+						x= x+radius>=canvas.width? canvas.width-radius: radius;
+						vx*= -1;
+					}
+					if(y+radius>=canvas.height || y<=radius){
+						y= y+radius>=canvas.height? canvas.height-radius: radius;
+						vy*= -1;
+					}
+					setTimeout(_ =>{
+						play();
+					}, 20);
+				}
 				canvas.addEventListener("mousedown", function (e){
 					cx= e.pageX-canvas.offsetLeft;
 					cy= e.pageY-canvas.offsetTop;
-					if( Math.sqrt(Math.abs(cx-x)*Math.abs(cx-x)+Math.abs(cy-y)*Math.abs(cy-y)) <= radius )
+					// if( Math.sqrt(Math.abs(cx-x)*Math.abs(cx-x)+Math.abs(cy-y)*Math.abs(cy-y)) <= radius )
+					console.log(ctx.isPointInPath(Arc.path, cx, cy));
+					if(ctx.isPointInPath(Arc.path, cx, cy))
 					down= true;
 				});
 				window.addEventListener("mousemove", function (e){
 					if(down){
 						mx= e.pageX-canvas.offsetLeft;
 						my= e.pageY-canvas.offsetTop;
-						console.log(-(mx-cx));
-						console.log(-(my-cy));
-						DrawPath();
+						// console.log(mx-cx);
+						// console.log(-(my-cy));
+						DrawPath(mx-cx, -(my-cy));
 					}
 				});
 				window.addEventListener("mouseup", function (e){
 					down= false;
 				});
-			}
-			function clear (){//canvas clear
-				ctx.clearRect(0,0,canvas.width, canvas.height);
-			}
-			function arc (x, y){//draw arc
-				ctx.setLineDash([]);
-				ctx.beginPath();
-				ctx.arc(x, y, radius, 0, 2*Math.PI, false);//x, y, 반지름
-				ctx.stroke();
-				ctx.closePath();
-				ctx.setLineDash([5, 3]);
-			}
-			function DrawPath (){
-			}
-			function play(){//play animation
-				arc(x, y);
-				clear();
-				x+=vx;
-				y+=vy;
-				if(x+radius>=canvas.width || x<=radius){
-					x= x+radius>=canvas.width? canvas.width-radius: radius;
-					vx*= -1;
-				}
-				if(y+radius>=canvas.height || y<=radius){
-					y= y+radius>=canvas.height? canvas.height-radius: radius;
-					vy*= -1;
-				}
-				setTimeout(_ =>{
-					play();
-				}, 20);
-			}
-			const canvas= document.getElementById("canvas");
-			const ctx= canvas.getContext('2d');
-			const radius= 10;
-			let x= canvas.width/2;//location
-			let y= canvas.height/2;//location
-
-			let cx=0, cy= 0;
-			let mx=0, my= 0;
-			let down= false;
-
-			ctx.setLineDash([5, 3]);/*dashes are 5px and spaces are 3px*/
-			ctx.lineCap= 'round';
-			ctx.strokeStyle="#333";
-			ctx.fillStyle="#333";
-
-			ev();
-			arc(x, y);
-		}
 	</script>
 </body>
 </html>
