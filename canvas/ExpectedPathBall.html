@@ -11,96 +11,171 @@
 	</style>
 </head>
 <body>
-	<canvas id="canvas" width="800" height="800"></canvas>
+	<canvas id="canvas" width="900" height="900"></canvas>
 	<script>
-			const canvas= document.getElementById("canvas");
-			const ctx= canvas.getContext('2d');
+		const canvas= document.getElementById("canvas");
+		const ctx= canvas.getContext('2d');
 
-			let cx=0, cy= 0;
-			let mx=0, my= 0;
-			let down= false;
+		let cx=0, cy= 0;
+		let mx=0, my= 0;
+		let down= false;
 
-			let Arc= new _Arc();
-			Arc.init(canvas.width/2, canvas.height/2);
+		let Arc= new _Arc();
+		Arc.init(canvas.width/2, canvas.height/2);
 
-			function _Arc (){
+		function _Arc (){
+			this.path= new Path2D();
+			this.radius= 10;
+			this.x;
+			this.y;
+			this.init= (px, py) =>{
+				this.x= px;this.y= py;
+				this.draw();
+			}
+			this.draw= (c= "#4BBCF4", x= this.x, y= this.y) =>{
 				this.path= new Path2D();
-				this.radius= 10;
-				this.x;
-				this.y;
-				this.init= (px, py) =>{
-					this.x= px;this.y= py;
-					this.draw();
-				}
-				this.draw= _ =>{
-					this.path= new Path2D();
-					ctx.setLineDash([]);
-					ctx.strokeStyle= "#000";
+				ctx.setLineDash([]);
+				ctx.strokeStyle= "#000";
+				ctx.fillStyle= c;
+				ctx.lineWidth= 2;
 
-					this.path.arc(this.x, this.y, this.radius, 0, 2*Math.PI, false);
-					ctx.stroke(this.path);
+				this.path.arc(x, y, this.radius, 0, 2*Math.PI, false);
+				ctx.fill(this.path);
 
-					ctx.setLineDash([5, 3]);
-					ctx.strokeStyle= "#333";
+				_Set();
+				
+			}
+		}
+
+		function _Set (){
+			ctx.strokeStyle= "#A5DDF9";
+			ctx.fillStyle="#A5DDF9";
+			ctx.lineWidth= 3;
+			ctx.lineCap= 'round';
+			ctx.setLineDash([5, 10]);
+		}
+		function clear (){ctx.clearRect(0,0,canvas.width,canvas.height);}
+		function DrawPath (lx, ly, re){
+			// console.log(`${lx}, ${ly}`);
+			if(lx.toString().length>2){
+				lx= lx/10;
+				ly= ly/10;
+			}else if(lx.toString().length>3){
+				lx= lx/100;
+				ly= ly/100;
+			}
+			if(ly.toString().length>2){
+				lx= lx/10;
+				ly= ly/10;
+			}else if(ly.toString().length>3){
+				lx= lx/100;
+				ly= ly/100;
+			}
+			console.log(`${lx}, ${ly}`);
+
+			function DrawLine (x, y){
+				while( (x<=canvas.width || x>=0) || (y<=canvas.height || y>=0) ){
+					x+= lx;
+					y-= ly;
+					if(x+Arc.radius>=canvas.width || x<=Arc.radius){
+						x= x+Arc.radius>=canvas.width? canvas.width-Arc.radius: Arc.radius;
+						// lx*= -1;
+						// if(y+Arc.radius>=canvas.height || y<=Arc.radius){
+						// 	y= y+Arc.radius>=canvas.height? canvas.height-Arc.radius: Arc.radius;
+						// 	ly*= -1;
+						// }
+						break;
+					}
+					if(y+Arc.radius>=canvas.height || y<=Arc.radius){
+						y= y+Arc.radius>=canvas.height? canvas.height-Arc.radius: Arc.radius;
+						// ly*= -1;
+						// if(x+Arc.radius>=canvas.width || x<=Arc.radius){
+						// 	x= x+Arc.radius>=canvas.width? canvas.width-Arc.radius: Arc.radius;
+						// 	lx*= -1;
+						// }
+						break;
+					}
 				}
+				ctx.lineTo(x, y);
+				ctx.stroke();
+			}
+			function DrawArc (x, y){
+				while( (x<=canvas.width || x>=0) || (y<=canvas.height || y>=0) ){
+					x+= lx;
+					y-= ly;
+					if(x+Arc.radius>=canvas.width || x<=Arc.radius){
+						x= x+Arc.radius>=canvas.width? canvas.width-Arc.radius: Arc.radius;
+						lx*= -1;
+
+						if(y+Arc.radius>=canvas.height || y<=Arc.radius){
+							y= y+Arc.radius>=canvas.height? canvas.height-Arc.radius: Arc.radius;
+							ly*= -1;
+						}
+						break;
+					}
+					if(y+Arc.radius>=canvas.height || y<=Arc.radius){
+						y= y+Arc.radius>=canvas.height? canvas.height-Arc.radius: Arc.radius;
+						ly*= -1;
+
+						if(x+Arc.radius>=canvas.width || x<=Arc.radius){
+							x= x+Arc.radius>=canvas.width? canvas.width-Arc.radius: Arc.radius;
+							lx*= -1;
+						}
+						break;
+					}
+				}
+				Arc.draw("#7cd3ff" ,x ,y);
 			}
 
-			ctx.lineCap= 'round';
-			ctx.setLineDash([5, 3]);/*dashes are 5px and spaces are 3px*/
-			ctx.strokeStyle="#333";
-			ctx.fillStyle="#333";
+			clear();
 
-				function clear (){
-					ctx.clearRect(0,0,canvas.width,canvas.height);
-				}
-				function DrawPath (lx, ly){
-					console.log(`${lx}, ${ly}`);
-					
+			ctx.beginPath();
+			ctx.moveTo(Arc.x, Arc.y);
+			DrawLine(Arc.x, Arc.y);
+			DrawArc(Arc.x, Arc.y);
+			ctx.closePath();
+
+			Arc.draw();
+		}
+		// function play (){//play animation
+		// 	arc(x, y);
+		// 	clear();
+		// 	x+=vx;
+		// 	y+=vy;
+		// 	if(x+radius>=canvas.width || x<=radius){
+		// 		x= x+radius>=canvas.width? canvas.width-radius: radius;
+		// 		vx*= -1;
+		// 	}
+		// 	if(y+radius>=canvas.height || y<=radius){
+		// 		y= y+radius>=canvas.height? canvas.height-radius: radius;
+		// 		vy*= -1;
+		// 	}
+		// 	setTimeout(_ =>{
+		// 		play();
+		// 	}, 20);
+		// }
+		canvas.addEventListener("mousedown", function (e){
+			cx= e.pageX-canvas.offsetLeft;
+			cy= e.pageY-canvas.offsetTop;
+			// if( Math.sqrt(Math.abs(cx-x)*Math.abs(cx-x)+Math.abs(cy-y)*Math.abs(cy-y)) <= radius )
+			if(!ctx.isPointInPath(Arc.path, cx, cy))
+			down= true;
+		});
+		window.addEventListener("mousemove", function (e){
+			if(down){
+				mx= e.pageX-canvas.offsetLeft;
+				my= e.pageY-canvas.offsetTop;
+				if(ctx.isPointInPath(Arc.path, mx, my)){
 					clear();
 					Arc.draw();
-					ctx.beginPath();
-					ctx.moveTo(Arc.x, Arc.y);
-					ctx.lineTo(Arc.x - lx, Arc.y + ly);
-					ctx.stroke();
-					ctx.closePath();
+				}else{
+					DrawPath( (mx-Arc.x), -(my-Arc.y), 0);
 				}
-				function play (){//play animation
-					arc(x, y);
-					clear();
-					x+=vx;
-					y+=vy;
-					if(x+radius>=canvas.width || x<=radius){
-						x= x+radius>=canvas.width? canvas.width-radius: radius;
-						vx*= -1;
-					}
-					if(y+radius>=canvas.height || y<=radius){
-						y= y+radius>=canvas.height? canvas.height-radius: radius;
-						vy*= -1;
-					}
-					setTimeout(_ =>{
-						play();
-					}, 20);
-				}
-				canvas.addEventListener("mousedown", function (e){
-					cx= e.pageX-canvas.offsetLeft;
-					cy= e.pageY-canvas.offsetTop;
-					// if( Math.sqrt(Math.abs(cx-x)*Math.abs(cx-x)+Math.abs(cy-y)*Math.abs(cy-y)) <= radius )
-					console.log(ctx.isPointInPath(Arc.path, cx, cy));
-					if(ctx.isPointInPath(Arc.path, cx, cy))
-					down= true;
-				});
-				window.addEventListener("mousemove", function (e){
-					if(down){
-						mx= e.pageX-canvas.offsetLeft;
-						my= e.pageY-canvas.offsetTop;
-						// console.log(mx-cx);
-						// console.log(-(my-cy));
-						DrawPath(mx-cx, -(my-cy));
-					}
-				});
-				window.addEventListener("mouseup", function (e){
-					down= false;
-				});
+			}
+		});
+		window.addEventListener("mouseup", function (e){
+			down= false;
+		});
 	</script>
 </body>
 </html>
