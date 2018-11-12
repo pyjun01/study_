@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Angle</title>
+	<style>
+		html, body{width: 100%;height: 100%;margin: 0;padding: 0;display: flex;justify-content: center;align-items: center;background:#000; flex-direction: column;}
+		#canvas{background:#fff;}
+		div{color: #fff;}
+		input{width: 3em;}
+	</style>
+</head>
+<body>
+	<canvas id="canvas" width="900" height="900"></canvas>
+	<script>
+		window.onload= _ =>{
+			var c = document.getElementById("canvas");
+			var ctx = c.getContext("2d");
+			x1 = 30;
+			y1 = 40;
+			r =  50;
+			theta = 15;
+			ctx.moveTo(x1, y1);
+			ctx.lineTo(x1 + r * Math.cos(theta), y1 + r * Math.sin(theta));
+			ctx.stroke();
+		}
+	</script>
+</body>
+</html>

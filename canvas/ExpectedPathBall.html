@@ -56,7 +56,6 @@
 		}
 		function clear (){ctx.clearRect(0,0,canvas.width,canvas.height);}
 		function DrawPath (lx, ly, re){
-			// console.log(`${lx}, ${ly}`);
 			if(lx.toString().length>2){
 				lx= lx/10;
 				ly= ly/10;
@@ -71,8 +70,6 @@
 				lx= lx/100;
 				ly= ly/100;
 			}
-			console.log(`${lx}, ${ly}`);
-
 			function DrawLine (x, y){
 				while( (x<=canvas.width || x>=0) || (y<=canvas.height || y>=0) ){
 					x+= lx;
@@ -137,6 +134,21 @@
 
 			Arc.draw();
 		}
+		
+		function DrawLinePoint(x, y, angle, length)
+		{
+			const radians = (Math.PI / 180.0) * angle;
+			ctx.beginPath();
+			ctx.moveTo(100, 100);
+			ctx.lineTo(x + Math.cos(radians)*length, y + Math.sin(radians)*length);
+			ctx.stroke();
+			ctx.closePath();
+			/*
+				(r*r)= (x*x) + (y*y)
+				tan(θ)= y / x
+				θ = atan(y / x)
+			*/
+		}
 		// function play (){//play animation
 		// 	arc(x, y);
 		// 	clear();
@@ -158,8 +170,10 @@
 			cx= e.pageX-canvas.offsetLeft;
 			cy= e.pageY-canvas.offsetTop;
 			// if( Math.sqrt(Math.abs(cx-x)*Math.abs(cx-x)+Math.abs(cy-y)*Math.abs(cy-y)) <= radius )
-			if(!ctx.isPointInPath(Arc.path, cx, cy))
-			down= true;
+			if(!ctx.isPointInPath(Arc.path, cx, cy)){
+				down= true;
+				DrawPath( (cx-Arc.x), -(cy-Arc.y), 0);
+			}
 		});
 		window.addEventListener("mousemove", function (e){
 			if(down){
