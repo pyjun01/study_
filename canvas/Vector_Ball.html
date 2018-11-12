@@ -1,0 +1,91 @@
+<!--
+	스와이프 공튀기기
+	경로 미리보기
+-->
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+	<meta charset="UTF-8">
+	<title>Vector</title>
+	<style>
+		html,body{height: 100%;}
+		body{background:#000;display: flex;justify-content: center;align-items: center;}
+		canvas{background:#fff; display: block;}
+	</style>
+</head>
+<body>
+	<canvas id="canvas" width="500" height="500"></canvas>
+	<script src="http://code.jquery.com/jquery-3.2.1.js"></script>
+	<script>
+		const canvas= document.getElementById("canvas")
+		const ctx= canvas.getContext("2d")
+		const W= canvas.width//박스 width
+		const H= canvas.height//박스 height
+		const gravity= 0.5//중력값
+
+		ctx.strokeStyle= "#333"
+		ctx.fillStyle= "#333"
+
+		let B= new Ball(50);
+		function Ball(r){
+			this.location= {
+				x: canvas.width/2,
+				y: canvas.height/2
+			},
+			this.speed= {
+				x: Math.random()*15+5,
+				y: Math.random()*-15-5
+			},
+			this.radius= r
+		}
+		function draw (){
+			ctx.clearRect(0,0,W,H)
+			ctx.beginPath()
+			ctx.arc(
+				B.location.x,
+				B.location.y,
+				B.radius,
+				0,
+				2*Math.PI,
+				false
+			)
+			ctx.stroke()
+			ctx.fill()
+			ctx.closePath()
+		}
+		function apply (){
+			let bs= B.speed;
+			let bl= B.location;
+
+			bs.y+= gravity;
+			bs.x+= (-bs.x*0.005);
+			bl.y+= bs.y;
+			bl.x+= bs.x;
+
+			if(bl.y+B.radius>H){
+				bl.y= H-B.radius
+				bs.y*= -0.8
+			}
+			if(bl.x+B.radius>=W){
+				bl.x= W-B.radius
+				bs.x*= -1
+				bs.x+= -bs.x*0.003
+			}else if(bl.x-B.radius<=0 ){
+				bl.x= B.radius
+				bs.x*= -1
+				bs.x+= -bs.x*0.003
+			}
+		}
+		function play (){
+			draw();
+			apply();
+			setTimeout(_ =>{
+				play();
+			},1000/60);
+		}
+		window.onload= _ =>{
+			play();
+		}
+	</script>
+</body>
+</html>
