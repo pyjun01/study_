@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>UsingKeyBoard</title>
+	<style>
+		*{margin: 0;padding: 0;box-sizing: border-box;}
+		html,body,#app{width: 100%;height: 100%;}
+		#app{display: flex;align-items: center;flex-direction: column;justify-content: center;}
+		#canvas{width: 800px;height: 800px;background: #eee;}
+	</style>
+</head>
+<body>
+	<div id="app"><canvas id="canvas" width="800" height="800"></canvas>
+		<span class="play-time">0</span>
+		<div>
+			<strong>이미지 출처</strong> 
+			<p>김정은 국방위원장님: <a href="https://img.sbs.co.kr/newimg/news/20180426/201175798_1280.jpg">https://img.sbs.co.kr/newimg/news/20180426/201175798_1280.jpg</a></p>
+			<p>문재인 대통령님: <a href="https://pds.joins.com/news/component/htmlphoto_mmdata/201611/16/htm_2016111625914788609.jpg">https://pds.joins.com/news/component/htmlphoto_mmdata/201611/16/htm_2016111625914788609.jpg</a></p>
+		</div>
+		</div>
+	<script>
+		var FPS= 60;
+		
+		function Game (image){
+			this.image= image;
+
+			this.canvas= document.getElementById('canvas');
+			this.W= canvas.width;
+			this.H= canvas.height;
+			this.ctx= canvas.getContext('2d');
+			this.pos= {
+				x: this.W/2,
+				y: this.H/2,
+			};
+			this.size= 40;
+			this.ball=[];
+			this.move= [];
+		}
+		Game.prototype.start= function (){
+			this.canvas= document.getElementById('canvas');
+			this.W= canvas.width;
+			this.H= canvas.height;
+			this.ctx= canvas.getContext('2d');
+			this.eventInit();
+			this.start= new Date();
+			this.span= document.querySelector(".play-time");
+			console.log(this.span);
+			var self= this;
+			this.timer= setInterval( function (){
+				var now= new Date();
+				self.span.innerText= ((now.getTime() - self.start.getTime()) / (1000)).toFixed(1);
+			}, 100);
+		}
+		Game.prototype.eventInit = function() { // add event
+			var self= this;
+			window.addEventListener("keydown", function (e){
+				switch(e.keyCode) {
+					case 37:
+						self.move[0]= 1;
+						break;
+					case 38:
+						self.move[1]= 1;
+						break;
+					case 39:
+						self.move[2]= 1;
+						break;
+					case 40:
+						self.move[3]= 1;
+						break;
+				}
+			});
+			window.addEventListener("keyup", function (e){
+				switch(e.keyCode) {
+					case 37:
+						self.move[0]= 0;
+						break;
+					case 38:
+						self.move[1]= 0;
+						break;
+					case 39:
+						self.move[2]= 0;
+						break;
+					case 40:
+						self.move[3]= 0;
+						break;
+				}
+			});
+		};
+		Game.prototype.update = function(num) {
+			for(var i=0; i<4; i++){ // apply if move
+				if(this.move[i]==1){
+					switch(i) {
+						case 0:
+							this.pos.x-= this.pos.x-10>=this.size? 10: 0;
+							break;
+						case 1:
+							this.pos.y-= this.pos.y-10>=this.size? 10: 0;
+							break;
+						case 2:
+							this.pos.x+= this.pos.x+10<= this.W-this.size? 10: 0;
+							break;
+						case 3:
+							this.pos.y+= this.pos.y+10<= this.H-this.size? 10: 0;
+							break;
+					}
+				}
+			}
+			this.draw();//player ball draw
+			var isDie= this.drawBall(num);//check die and draw Ball
+			var self= this;
+			setTimeout(function (){
+				if(isDie)
+					return self.die();
+				if(num%100==0){
+					self.addBall(num);
+				}
+				self.update(++num);
+			}, 1000/FPS);
+		};
+		Game.prototype.die = function() {
+			var die= new Date();
+			clearInterval(this.timer);
+			this.ctx.save();
+			this.ctx.fillStyle= "#fff";
+			this.ctx.fillRect(0, 0, this.W, this.H);
+			this.ctx.fillStyle= "red";
+			this.ctx.textAlign= "center";
+			this.ctx.font= "50px sans-serif";
+			this.ctx.fillText("DIE", this.W/2, this.H/2);
+			this.ctx.fillText((die.getTime() - this.start.getTime()) / (1000)+"초", this.W/2, this.H/1.2);
+		};
+		Game.prototype.draw= function (){ // draw player's Ball
+				this.ctx.clearRect(0,0, this.W, this.H);
+				this.ctx.save();
+				this.ctx.beginPath();
+				this.ctx.arc(this.pos.x, this.pos.y, this.size, 0, Math.PI*2);
+				this.ctx.clip();
+				this.ctx.drawImage(this.image[0], this.pos.x-this.size, this.pos.y-this.size, this.size*2, this.size*2);
+				// this.ctx.fill();
+				this.ctx.closePath();
+				this.ctx.restore();
+		}
+		Game.prototype.drawBall= function (n){ // draw flying Ball
+			var remove= [];
+			for(var i=0; i<this.ball.length; i++){
+				var a= this.ball[i].apply(n, this);
+				if(a){
+					remove.push(i)
+				}else{
+					this.ball[i].draw(this);
+					var b= this.ball[i];
+					var x= Math.abs(this.pos.x-b.x);
+					var y= Math.abs(this.pos.y-b.y);
+					var l= Math.sqrt(x*x + y*y);
+					if(l<=this.size+this.ball[i].size){
+						return true;
+					}
+				}
+			}
+			for(var i=0, len= remove.length; i < len; i++)
+				this.ball.splice(remove[i], 1);
+			return false;
+		}
+		Game.prototype.addBall= function (n){ this.ball.push(new Ball(n, this)); } // add flying Ball
+		
+		function Ball (n, g){
+			this.velocity=[];
+			this.num= n;
+			this.size= Math.round(Math.random()*10)+30;
+			if(Math.round(Math.random()*1)){
+				if(Math.round(Math.random()*1)){
+					this.x= Math.round(Math.random()*(g.W-this.size))+this.size;
+					this.y= this.size;
+				}else{
+					this.x= this.size;
+					this.y= Math.round(Math.random()*(g.H-this.size))+this.size;;
+				}
+			}else{
+				if(Math.round(Math.random()*1)){
+					this.x= g.W-this.size;
+					this.y= Math.round(Math.random()*(g.H-this.size))+this.size;;
+				}else{
+					this.x= Math.round(Math.random()*(g.W-this.size))+this.size;;
+					this.y= g.H-this.size;
+				}
+			}
+
+			if(Math.round(Math.random()*1)){
+				this.velocity.push(Math.round(Math.random()*5)+3);
+				if(Math.round(Math.random()*1))
+					this.velocity.push(Math.round(Math.random()*5)+3);
+				else
+					this.velocity.push(-(Math.round(Math.random()*5)+3));
+			}else{
+				this.velocity.push(-(Math.round(Math.random()*5)+3));
+				if(Math.round(Math.random()*1))
+					this.velocity.push(Math.round(Math.random()*5)+3);
+				else
+					this.velocity.push(-(Math.round(Math.random()*5)+3));
+			}
+		}
+		Ball.prototype.draw = function(g) {
+			g.ctx.save();
+			g.ctx.fillStyle= "#f00";
+			g.ctx.beginPath();
+			g.ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+			g.ctx.clip();
+			g.ctx.drawImage(g.image[1], this.x - this.size, this.y - this.size, this.size * 2, this.size * 2)
+			// g.ctx.fill();
+			g.ctx.closePath();
+			g.ctx.restore();
+		};
+		Ball.prototype.apply = function(num, g) {
+			if(num-this.num>=800)
+				return true;
+			this.x+= this.velocity[0];
+			this.y+= this.velocity[1];
+			if(this.x<=this.size){
+				this.x= this.size;
+				this.velocity[0]*= -1;
+			}
+			if(this.x >= g.W - this.size){
+				this.x= g.W-this.size;
+				this.velocity[0]*= -1;
+			}
+			if(this.y<=this.size){
+				this.y= this.size;
+				this.velocity[1]*= -1;
+			}
+			if(this.y>=g.H-this.size){
+				this.y= g.H-this.size;
+				this.velocity[1]*= -1;
+			}
+			return false;
+		};
+		function loadImage (images, callback){
+			var f= 0, i= 0, img= [];
+			for(var j=0; j < images.length; j++){
+				f++;
+				img[j]= new Image();
+				console.log(images[j]);
+				img[j].src= images[j];
+				img[j].onload= function (){
+					i++;
+					console.log(f, i);
+					if(f===i){
+						return callback(img);
+					}
+				}
+			}
+		}
+		window.onload= function (){
+			var images=["./images/sinner.png", "./images/fig.png"];
+			loadImage(images, function (img){
+				var game= new Game(img);
+				game.start();
+				game.update(0);
+			})
+		}
+	</script>
+</body>
+</html>
