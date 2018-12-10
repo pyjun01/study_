@@ -4,24 +4,36 @@
 	<meta charset="UTF-8">
 	<title>UsingKeyBoard</title>
 	<style>
-		*{margin: 0;padding: 0;box-sizing: border-box;}
+		*{margin: 0;padding: 0;box-sizing: border-box;user-select: none;}
 		html,body,#app{width: 100%;height: 100%;}
 		#app{display: flex;align-items: center;flex-direction: column;justify-content: center;}
 		#canvas{width: 800px;height: 800px;background: #eee;}
+		.play-time{font-size: 30px;}
+		.play-time:after{content: 's';}
+		.re{position: absolute;padding: 20px 35px;font-size: 40px;border: 0;background: #fff;margin-top: 50px;border: 1px solid #000;outline: none;}
+		#mask{width: 100%;height: 100%;position: absolute;z-index: 9999;background: #000;color: #fff;text-align: center;display: flex;justify-content: center;	align-items: center;flex-direction: column;}
+		#mask>button{padding: 10px 15px;border: 0;background: #fff;border-radius: 5px;margin-top: 12px;}
 	</style>
 </head>
 <body>
-	<div id="app"><canvas id="canvas" width="800" height="800"></canvas>
+	<div id="app">
+		<div id="mask">
+			조작법: 방향키<br/>
+			<button>start</button>
+		</div>
+		<canvas id="canvas" width="800" height="800"></canvas>
 		<span class="play-time">0</span>
+		<button class="re" style="display:none;">re?</button>
 		<div>
 			<strong>이미지 출처</strong> 
 			<p>김정은 국방위원장님: <a href="https://img.sbs.co.kr/newimg/news/20180426/201175798_1280.jpg">https://img.sbs.co.kr/newimg/news/20180426/201175798_1280.jpg</a></p>
 			<p>문재인 대통령님: <a href="https://pds.joins.com/news/component/htmlphoto_mmdata/201611/16/htm_2016111625914788609.jpg">https://pds.joins.com/news/component/htmlphoto_mmdata/201611/16/htm_2016111625914788609.jpg</a></p>
 		</div>
-		</div>
+	</div>
 	<script>
 		var FPS= 60;
-		
+		var images;
+
 		function Game (image){
 			this.image= image;
 
@@ -45,7 +57,6 @@
 			this.eventInit();
 			this.start= new Date();
 			this.span= document.querySelector(".play-time");
-			console.log(this.span);
 			var self= this;
 			this.timer= setInterval( function (){
 				var now= new Date();
@@ -129,6 +140,14 @@
 			this.ctx.font= "50px sans-serif";
 			this.ctx.fillText("DIE", this.W/2, this.H/2);
 			this.ctx.fillText((die.getTime() - this.start.getTime()) / (1000)+"초", this.W/2, this.H/1.2);
+			var re= document.querySelector(".re");
+			re.style.display= "block";
+			re.onclick= function (){
+				this.style.display= "none";
+				game= new Game(images);
+				game.start();
+				game.update(0);
+			}
 		};
 		Game.prototype.draw= function (){ // draw player's Ball
 				this.ctx.clearRect(0,0, this.W, this.H);
@@ -234,28 +253,30 @@
 			}
 			return false;
 		};
-		function loadImage (images, callback){
-			var f= 0, i= 0, img= [];
-			for(var j=0; j < images.length; j++){
-				f++;
-				img[j]= new Image();
-				console.log(images[j]);
-				img[j].src= images[j];
-				img[j].onload= function (){
-					i++;
-					console.log(f, i);
-					if(f===i){
-						return callback(img);
+		window.onload= function (){
+			function loadImage (imgs, callback){
+				var f= 0, i= 0, img= [];
+				for(var j=0; j < imgs.length; j++){
+					f++;
+					img[j]= new Image();
+					img[j].src= imgs[j];
+					img[j].onload= function (){
+						i++;
+						if(f===i){
+							return callback(img);
+						}
 					}
 				}
 			}
-		}
-		window.onload= function (){
-			var images=["./images/sinner.png", "./images/fig.png"];
-			loadImage(images, function (img){
-				var game= new Game(img);
-				game.start();
-				game.update(0);
+			var imgs=["./images/sinner.png", "./images/fig.png"];
+			loadImage(imgs, function (img){
+				images= img;
+				document.querySelector("button").addEventListener("click", function (){
+					document.querySelector("#mask").style.display= "none";
+					var game= new Game(img);
+					game.start();
+					game.update(0);
+				})
 			})
 		}
 	</script>
