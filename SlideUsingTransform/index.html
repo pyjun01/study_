@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>Slide</title>
+	<style>
+		*{margin: 0;padding: 0;}
+		#app{width: 100vw;height: 100vh;position: relative;background: #000;}
+		.card {
+			position: relative;width: 100%;height: 100%;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+			transform-style: preserve-3d;transition: 0.5s;
+		}
+		.front {
+			position: absolute;
+			width: 100%;height: 100%;
+			backface-visibility: hidden;
+			z-index: 2;
+			background: center / cover no-repeat url("images/slide1.png");
+			transform-style: preserve-3d;
+		}
+    	.back{
+		    position: absolute;
+		    width: 100%;height: 100%;
+		    backface-visibility: hidden;
+		    transform: rotateY( 180deg );
+		    background: center / cover no-repeat url("images/slide2.png");
+		    transform-style: preserve-3d;
+		}
+		button{position: absolute;top: 0;z-index: 99999;top: 50%;transform: translateY(-50%);}
+		.next{right: 5px;}
+		.prev{left: 5px;}
+	</style>
+</head>
+<body>
+	<div id="app">
+	  <div class="card">
+	    <div class="front"></div>
+	    <div class="back"></div>
+	  </div>
+	</div>
+	<button class="prev">prev</button>
+	<button class="next">next</button>
+	<script>
+		window.onload= function (){
+			var isAnimated= false;
+			var cnt= 1;
+			var min= 1;
+			var max= 3
+
+			var card= document.querySelector(".card");
+			var btn0= document.querySelector("button.next");
+			var btn1= document.querySelector("button.prev");
+			
+			function next (){
+				cnt<max? cnt++: cnt=min;
+				var next_cnt= cnt;
+				next_cnt < max? next_cnt++: next_cnt= min;
+				card.children[1].style.background= "center / cover no-repeat url('images/slide"+ cnt +".png')";
+				card.style.transition= "0.5s";
+				card.style.transform= "rotateY(-180deg)";
+				setTimeout(function (){
+					card.children[0].style.background= "center / cover no-repeat url('images/slide"+ cnt +".png')";
+					card.style.transition= "none";
+					card.style.transform= "";
+					card.children[1].style.background= "center / cover no-repeat url('images/slide"+ next_cnt +".png')";
+					isAnimated= false;
+				}, 499);
+			}
+			btn0.addEventListener("click", function (){
+				if(isAnimated) return;
+				isAnimated= true;
+				next();
+			});
+			function prev (){
+				cnt>min? cnt--: cnt=max;
+				var prev_cnt= cnt;
+				prev_cnt > min? prev_cnt--: prev_cnt= max;
+				card.children[1].style.background= "center / cover no-repeat url('images/slide"+ cnt +".png')";
+				card.style.transition= "0.5s";
+				card.style.transform= "rotateY(-180deg)";
+				setTimeout(function (){
+					card.children[0].style.background= "center / cover no-repeat url('images/slide"+ cnt +".png')";
+					card.style.transition= "none";
+					card.style.transform= "";
+					card.children[1].style.background= "center / cover no-repeat url('images/slide"+ prev_cnt +".png')";
+					isAnimated= false;
+				}, 499);
+			}
+			btn1.addEventListener("click", function (){
+				if(isAnimated) return;
+				isAnimated= true;
+				prev();
+			});
+
+		}
+	</script>
+</body>
+</html>
