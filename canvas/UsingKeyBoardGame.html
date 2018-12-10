@@ -66,6 +66,7 @@
 		Game.prototype.eventInit = function() { // add event
 			var self= this;
 			window.addEventListener("keydown", function (e){
+				e.preventDefault();
 				switch(e.keyCode) {
 					case 37:
 						self.move[0]= 1;
@@ -82,6 +83,7 @@
 				}
 			});
 			window.addEventListener("keyup", function (e){
+				e.preventDefault();
 				switch(e.keyCode) {
 					case 37:
 						self.move[0]= 0;
