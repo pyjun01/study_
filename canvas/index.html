@@ -14,54 +14,11 @@
 	</style>
 </head>
 <body>
-	<!-- 
-		19 x 19 
-		가로 42cm, 세로 45cm
-	-->
-	<canvas id="canvas" width="1000" height="1000"></canvas>
-	<div class="color">
-		<canvas id="color"></canvas>
-	</div>
-	<script>
-		const canvas = document.querySelector('canvas');
-		const ctx = canvas.getContext('2d');
-		const W= canvas.width;
-		const H= canvas.height;
-		const len= 21;
-		const paths = [];
-
-		for (let i = 0; i < Math.pow(len, 2); i++) {// draw Path, fill canvas, push path
-			let path= drawPath(i%len*W/len, (Math.ceil((i+1)/len)-1)*H/len);
-			ctx.fillStyle = i%2? `white`: 'black';
-			ctx.fill(path);
-  			paths.push(path);
-		}
-
-		canvas.addEventListener('click', e =>{//canvas click
-			let b= canvas.getBoundingClientRect();
-			let x= e.pageX - b.top;
-			let y= e.pageY - b.left;
-			paths.forEach((path, index) => {
-				if (ctx.isPointInPath(path, x, y)) {
-					let c= ctx.getImageData(x, y, 1, 1).data[0];
-					ctx.fillStyle= c? "black": "white";
-					ctx.fill(path)
-				}
-			});
-		});
-
-		function drawPath (x, y){
-			let path= new Path2D();
-			path.moveTo(x, y);
-			x+= W/5;
-			path.lineTo(x,y);
-			y+= H/5;
-			path.lineTo(x,y);
-			x-= W/5;
-			path.lineTo(x,y);
-			path.closePath();
-			return path;
-		}
-	</script>
+	<a href="./UsingKeyBoardGame.html">UsingKeyBoardGame</a><br/>
+	<a href="./DrawLineAngle.html">DrawLineAngle</a><br/>
+	<a href="./ExpectedPathBall.html">ExpectedPathBall</a><br/>
+	<a href="./FollowMouseBall.html">FollowMouseBall</a><br/>
+	<a href="./MouseBall.html">MouseBall</a><br/>
+	<a href="./Vector_Ball.html">Vector_Ball</a><br/>
 </body>
 </html>
