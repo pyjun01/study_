@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Map</title>
+	<style>
+		*{margin: 0;padding: 0;}
+		html,body{width: 100%;height: 100%;overflow: hidden;}
+		canvas{width: 100%;height: 100vh;}
+	</style>
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+	<script>
+		var c= document.getElementById("canvas")
+		var ctx= c.getContext('2d')
+		var bg= document.createElement("canvas");
+		var b= bg.getContext("2d");
+		
+		var x=0;
+		var y=0;
+		function display(){
+			ctx.clearRect(0, 0, c.width, c.height);
+			ctx.drawImage(bg, x, y, c.width, c.height, 0, 0, c.width, c.height);
+			ctx.fillStyle= "#f7edc8";
+			ctx.arc(c.width/2, c.height/2, 50, 0, 2 * Math.PI);
+			ctx.fill();
+			requestAnimationFrame(function (){display()})
+		}
+		window.onload= function (){
+			c.width= parseInt(getComputedStyle(c)["width"], 10)
+			c.height= parseInt(getComputedStyle(c)["height"], 10)
+			bg.width= 5000;
+			bg.height= 5000;
+			for(var i=0; i< 20; i++){
+				for(var j=0; j< 20; j++){
+					b.fillStyle= (j+i)%2==0? "#fff": "#000";
+					b.fillRect(j*(bg.width/20), i*(bg.width/20), (bg.width/20), (bg.width/20));
+				}
+			}
+			display();
+		}
+		window.onresize= function (){
+			c.width= parseInt(getComputedStyle(c)["width"], 10)
+			c.height= parseInt(getComputedStyle(c)["height"], 10)
+		}
+		var press= [false, false, false, false];
+		var add= 25;
+		var repeat= setInterval(function (){
+			if(press[0]){
+				if(x <= 0)
+					x=0;
+				else
+					x-= add;
+			}
+			if(press[1]){
+				if(y <= 0)
+					y=0;
+				else
+					y-= add;
+			}
+			if(press[2]){
+				if(x+c.width >= bg.width)
+					x=bg.width-c.width;
+				else
+					x+= add;
+			}
+			if(press[3]){
+				if(y+c.height >= bg.height)
+					y= bg.height-c.height
+				else
+					y+= add;
+			}
+		}, 25);
+		window.onkeydown= function (e){
+			var k= e.keyCode-37;
+			if(press[k])
+				return;
+			press[k]= true;
+		}
+		window.onkeyup= function (e){
+			var k= e.keyCode-37;
+			press[k]= false;
+			// clearInterval(repeat);
+		}
+	</script>
+</body>
+</html>
