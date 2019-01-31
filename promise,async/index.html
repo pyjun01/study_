@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<script>
+		// let myPro= function (param){
+		// 	return new Promise( (resolve, reject)=> {
+		// 		setTimeout(function (){
+		// 			if(param > 10)
+		// 				resolve("up");
+		// 			else
+		// 				reject(Error("Down"));
+		// 		}, 2000);
+		// 	});
+		// }
+		// await myPro(9)
+		// 	.then( data => console.log(data), err => console.error(err));
+
+		let loader = function (path){
+			return new Promise( (res, rej)=> {
+				let img= new Image();
+				img.src= path;
+				img.onload= ()=> {
+					console.log(path+" 이미지 로딩 완료");
+					res(img);
+				}
+				img.onerror= ()=> {
+					rej(Error("로딩 실패"));
+				}
+			});
+		}
+		// Promise.all([ loader("11.jpg"), loader("22.jpg"), loader("33.jpg") ])
+		// 	.then(data => console.log(data), err => console.error(err));
+
+		async function imageLoader(){
+			let img1= await loader("11.jpg");
+			console.log(img1);
+			let img2= await loader("22.jpg");
+			console.log(img2);
+			let img3= await loader("33.jpg");
+			console.log(img3);
+		}
+		imageLoader();
+		async function Num(){
+			function getI(i){
+				return new Promise((res, rej)=> {
+					setTimeout(function (){
+						res(i);
+					}, Math.random()*3000);
+				});
+			};
+			for(let i= 0; i<10; i++){
+				let q= await getI(i);
+				console.log(q);
+			}
+		}
+		Num();
+	</script>
+</body>
+</html>
