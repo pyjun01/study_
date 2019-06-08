@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<script>
+		// 1 2 3 4 5 6 7
+		// 1 1 2 3 5 8 13 
+
+		// bottom up
+		function fib (n){
+			let prev= 1;
+			let prev2= 1;
+			let now= 1;
+			for(var i= 3; i<=n; i++){
+				now= prev + prev2;
+				prev= prev2;
+				prev2= now;
+			}
+			return now;
+		}
+
+		// top down
+		/*
+			동적P 메모이제이션
+		*/
+		let memo= {};
+		function fib2 (n){
+			if( memo[n] !== undefined ) return memo[n];
+			if(n <= 2) return 1;
+			memo[n]= fib2(n-1) + fib2(n-2);
+			return memo[n];
+		}
+	</script>
+</body>
+</html>

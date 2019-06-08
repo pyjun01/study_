@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>계단</title>
+</head>
+<body>
+	<script>
+		// n개의 계단을 오를수 있는 방법 
+		// 계단은 1칸 또는 2칸 씩 오를수 있다.
+		// 1 2 3 4 5
+		// 1 2 3 5 8
+		let memo= {
+			1: 1, 
+			2: 2, 
+			3: 3
+		};
+		function fib (n){
+			if( memo[n] !== undefined ) return memo[n];
+			memo[n]= fib(n-1) + fib(n-2);
+			return memo[n];
+		}
+	</script>
+</body>
+</html>
