@@ -1,7 +1,4 @@
-SPA vs MPA
-<br>
-단일 페이지 어플리케이션 vs 다중 페이지 어플리케이션
-============
+# SPA vs MPA <br> 단일 페이지 어플리케이션 vs 다중 페이지 어플리케이션
 
 ## Single Page Application
 
