@@ -31,7 +31,7 @@
  <br><br>
 ![spa example](https://cdn-images-1.medium.com/max/1500/1*r1vmH5n7cYKJwYZq2fXKpw.gif)
 
-<br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br>
 
 ## Multi Page Application
 
@@ -39,7 +39,7 @@ MPA는 __고전적인__ 방식으로 동작합니다. <br>
 데이터를 보여주거나 서버로 요청을 보내는 등 변경사항이 발생하면 브라우저에서 서버로부터 새로운 페이지를 렌더링하게 합니다. 하지만 AJAX를 사용하여 서버와 브라우저 사이의 데이터 전달이 어느정도 해소되어, 페이지의 특정 부분만 바꿀 수 있도록 발전했습니다.<br>
 그리고 MPA는 많은 콘텐츠의 양과 많은 UI 계층 때문에 SPA보다 거대합니다. <br>
 
-<br><br><br><br>
+<br><br><br>
 
 ### MPA 장점
  * 쉽고 정확한 검색엔진 최적화(SEO)를 제공합니다. 페이지당 하나의 키워드가 적용되기 때문에 다른 키워드들과의 순위를 매기는데 더 유리합니다.
@@ -50,14 +50,16 @@ MPA는 __고전적인__ 방식으로 동작합니다. <br>
  * 프론트와 백엔드가 상당히 결합되있습니다. 예를 들어 상품 별점 같은 경우 db에서 뿌려주기 때문에 style로 width를 넣는다.
  * 프론트와 백엔드 각각의 프레임워크를 사용해야하고 개발과정이 길어지는 결과를 낳기 때문에 개발이 복잡해집니다.
  
- <br><br>
+ <br>
  
 ### MPA 예시
  * 네이버, 네이트같은 포털 사이트
  * 대부분의 쇼핑몰
  
- <br><br><br><br><br><br>
+ <br><br><br><br>
  
+![MPA, SPA](https://www.e-nor.com/wp-content/uploads/2018/10/spa-architecture-1-822x1024.png)
+
 ## SPA or MPA
  
   1. 페이지의 목적을 고려해볼 필요가 있습니다. 다양한 카테고리가 필요하다면 (ex: 온라인 쇼핑몰, 네이버 같은 포털 사이트) MPA! <br> Pinterest, Facebook, Twitter 같은 하나의 애플리케이션 형태라면 SPA 사용을 추천 드립니다.
